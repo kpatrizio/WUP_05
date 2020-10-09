@@ -1,5 +1,5 @@
 ---
-title: "Aides Drug"
+title: "Aides Drug Female Subjects"
 author: "Kelly Patrizio!"
 date: "October 6, 2020"
 output: html_document
@@ -9,6 +9,8 @@ output: html_document
 require(tidyverse)
 require(tigerstats)
 triUmp <-read.csv(file="triUmpsal.csv",header=TRUE)
+triUmpF = filter(triUmp,gender=="F")
+
 ```
 
 # Introduction
@@ -16,19 +18,20 @@ triUmp <-read.csv(file="triUmpsal.csv",header=TRUE)
 <!--In this section you explain what you are trying to show.  Where did the data come from?  What is the research or other question you are trying to answer?.  If you skimp in this section expect to be marked down in your grade. Paint a picture of the project a couple of paragraphs is expected!-->
 
 
-$H_0$: Null Hypothesis is, that this drug has no effect.  
-$H_A$: Alternative Hypothesis is, that this drug does have an effect.  
+$H_0$: Null Hypothesis is, that there is no relationship between infection and one who receives the drug or placebo.  
+
+$H_A$: Alternative Hypothesis is, that there is a relationship between infection and one who receives the drug or placebo.
+
 A new  preventative aides drug (triUmpsal) is under test in clinical trials. Consider only the females, does this drug seem effective?  Hint - use dplyr to obtain that subpopulation with the filter command.
 
 # Methods
 
 <!--Decide on your methods:  use "variable analysis" or other appropriate descriptors.  Make sure to choose at least one graphical method and at least one numerical method. Discuss what data manipulations may be needed for example subsetting or other binning procedures and what sort of graphical displays and inferential tools will be used!-->
 
-```{r}
-barchartGC(~class + Sex,data=ucdavis1)
-barchartGC(~class + Sex,data=ucdavis1, type="percent")
 
-```
+
+
+
 
 # Results
 
@@ -36,19 +39,46 @@ barchartGC(~class + Sex,data=ucdavis1, type="percent")
 
 ## Descriptive Results
 
+
 ### Graphical Descriptive Results
 
 <!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+
+```{r}
+barchartGC(~infected + treatment,data=triUmpF)
+barchartGC(~infected + treatment,data=triUmpF, type="percent")
+
+```
+
+The bar chart above appears to show that taking the drug vs the placebo does have a significant effect on women getting infected since according to the chart, 59% of women contracted aids with the vaccine as opposed to 41% who contracted the disease with no vaccine!  This is an 18% difference in women getting the disease.  On the other hand Approximately 48% of women who took the vaccine did not get the virus and 51% who didn't take the vaccine did not get the virus.  A 3% difference.  Therefore we see that there is an effect on women being infected who took the vaccine vs those who didn't. 
+
 
 ### Numerical Descriptive Results
 
 <!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
 
+```{r}
+table1 <- xtabs(~infected + treatment,data=triUmpF)
+rowPerc(table1)
+colPerc(table1)
+```
+
+In the above Cross-tab numerical graph with the focus on women, we can see that out of 100 clinical trials, 59% who received the vaccine were infected with the virus while, 41% who didn't receive the vaccine also contracted the virus.  However, we can also see that 48% that received the vaccine did not contract the virus, and 52% who didn't receive the vaccine did not contract the virus.  We can also see that of the 100 clinical trials that received treatment, 4% who received the drug were infected by the virus and 3% who received no treatment were not infected and 96% who received the drug were not infected and 98% who did not received the vaccine were not infected.  It would appear that there is not a significant difference between those who receive the virus and those who didn't, however, we can see a significant difference between the two graphs when the percentage of those who received the treatment is significantly different from the percentage of those infected.    
+
 ## Inferential Results
 
 <!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
 
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
+
+Since we only have two levels of categorical data, we are able to use the Fisher's Exact Test for Count Data in the inferential table above that shows a p-value less  than the 0.05 allowed to reject the Null Hypothesis.  With a p-value of 6.596 to the 10th power of negative 5, the probability of no relation is extremely impossible.   
 
 # Discussion and Conclusion
+
+In conclusion we reject the Null Hypothesis in favor of the Alternative Hypothesis that there is a relationship between those women who received the vaccine vs the women who received the placebo and the percentage of infection of the Aids Virus.  
 
 <!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
